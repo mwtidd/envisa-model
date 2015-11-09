@@ -29,14 +29,22 @@ Example:
   </style>
 
   <template>
+    <iron-ajax id="create"
+               url="[[url]]/[[path]]/"
+               method="POST"
+               content-type="application/json"
+               handle-as="json"
+               on-response="onCreateModel"
+               debounce-duration="300"></iron-ajax>
     <iron-ajax id="save"
-              url="[[url]]/[[path]]"
-              method="POST"
+              url="[[url]]/[[path]]/[[modelId]]"
+              method="PUT"
+              content-type="application/json"
               handle-as="json"
               on-response="onSaveModel"
               debounce-duration="300"></iron-ajax>
     <iron-ajax id="load"
-               url="[[url]]/[[path]]/[[model.id]]"
+               url="[[url]]/[[path]]/[[modelId]]"
                handle-as="json"
                on-response="onGetModel"
                debounce-duration="300"></iron-ajax>
@@ -59,7 +67,10 @@ Example:
 
     properties: {
 
-      _changed: false,
+      _changed: {
+        type: Boolean,
+        value: false
+      },
 
       /**
        * `url` The base url of the model store
@@ -85,8 +96,18 @@ Example:
        **/
       model: {
         type: Object,
-        value: {"id":null},
+        value: null,
         notify: true
+      },
+
+      modelId: {
+        type: String,
+        value: null
+      },
+
+      modelClass: {
+        type: String,
+        value: null
       }
 
     },
@@ -128,6 +149,8 @@ Example:
     onGetModel: function(event){
       if(event.detail.status == 200){
         this.model = event.detail.response;
+        this._changed = false;
+        this.fire("model-loaded", this.model);
       }
     },
 
@@ -139,7 +162,24 @@ Example:
 
     onSaveModel: function(event){
       if(event.detail.status == 200){
+        //this.model = event.detail.response;
+        this._changed = false;
+        this.fire("model-saved", this.model);
+      }
+    },
+
+    /**
+     * Fired after the model is created
+     *
+     * @param {object} event The create event.
+     **/
+
+    onCreateModel: function(event){
+      if(event.detail.status == 200){
         this.model = event.detail.response;
+        this.modelId = this.model.id;
+        this._changed = false;
+        this.fire("model-created", this.model);
       }
     },
 
@@ -158,6 +198,35 @@ Example:
      */
     hasChanged: function(){
       return this._changed;
+    },
+
+    setModelProperty: function(propertyName, propertyValue){
+      this.set("model." + propertyName, propertyValue);
+    },
+
+    stringifyModel: function(model){
+      return JSON.stringify(model);
+    },
+
+    createModel: function(){
+      if(!this.modelId){
+        this.model = {"className": this.modelClass};
+        this.$.create.body = JSON.stringify(this.model);
+        this.$.create.generateRequest();
+      }
+    },
+
+    loadModel: function(){
+      if(this.modelId){
+        this.$.load.generateRequest();
+      }
+    },
+
+    saveModel: function(){
+      if(this.modelId) {
+        this.$.save.body = JSON.stringify(this.model);
+        this.$.save.generateRequest();
+      }
     }
 
   });

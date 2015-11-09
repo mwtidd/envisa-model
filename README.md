@@ -1,6 +1,6 @@
 # envisa-model
 
-An element providing a starting point for other custom Polymer elements.
+An element for providing access to a persistent model.
 
 
 ## Dependencies
@@ -29,14 +29,14 @@ And you can run it via:
     
     polyserve -p 9090
 
-Once running, you can preview your element at
-`http://localhost:9090/components/envisa-model/`, where `envisa-model` is the name of the directory containing it.
+Once running, you can preview the element at
+`http://localhost:9090/components/envisa-model/demo/`
 
 
 ## Testing Your Element
 
-Simply navigate to the `/test` directory of your element to run its tests. If
-you are using Polyserve: `http://localhost:8080/components/envisa-model/test/`
+Simply navigate to the `/test` directory of the element to run its tests. If
+you are using Polyserve: `http://localhost:9090/components/envisa-model/test/`
 
 ### web-component-tester
 
