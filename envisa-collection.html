@@ -11,16 +11,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 
+<link rel="import" href="envisa-model.html">
+
 <!--
 An element to start from.
 
 Example:
 
-    <envisa-model></envisa-model>
+    <envisa-collection></envisa-collection>
 
 @demo
 -->
-<dom-module id="envisa-model">
+<dom-module id="envisa-collection">
 
   <style>
     :host {
@@ -29,19 +31,15 @@ Example:
   </style>
 
   <template>
-    <iron-ajax id="save"
-              url="[[url]]/[[path]]"
-              method="POST"
-              handle-as="json"
-              on-response="onSaveModel"
-              debounce-duration="300"></iron-ajax>
     <iron-ajax id="load"
-               url="[[url]]/[[path]]/[[model.id]]"
+               auto
+               url="[[url]]/[[path]]/"
                handle-as="json"
-               on-response="onGetModel"
+               on-response="onGetCollection"
                debounce-duration="300"></iron-ajax>
-    <paper-button on-click="changeModel">[[model.id]]</paper-button>
-
+    <template is="dom-repeat" items="{{collection}}">
+        <envisa-model url="[[url]]" path="[[path]]" model="[[item]]"></envisa-model>
+    </template>
     <content></content>
   </template>
 
@@ -51,15 +49,9 @@ Example:
 
   Polymer({
 
-    is: 'envisa-model',
-
-    listeners: {
-      'model-changed' : 'onModelChange'
-    },
+    is: 'envisa-collection',
 
     properties: {
-
-      _changed: false,
 
       /**
        * `url` The base url of the model store
@@ -80,12 +72,12 @@ Example:
       },
 
       /**
-       *  `model` The data model
-       *  @type {{id: string}}
+       *  `collection` The collection of data models
+       *  @type {array}
        **/
-      model: {
-        type: Object,
-        value: {"id":null},
+      collection: {
+        type: Array,
+        value: [],
         notify: true
       }
 
@@ -121,43 +113,14 @@ Example:
     // Element Behavior
 
     /**
-     * Fired after the model get is finished
+     * Fired after the collection get is finished
      *
      * @param {object} event The get event.
      **/
-    onGetModel: function(event){
+    onGetCollection: function(event){
       if(event.detail.status == 200){
-        this.model = event.detail.response;
+        this.collection = event.detail.response;
       }
-    },
-
-    /**
-     * Fired after the model save is finished
-     *
-     * @param {object} event The save event.
-     **/
-
-    onSaveModel: function(event){
-      if(event.detail.status == 200){
-        this.model = event.detail.response;
-      }
-    },
-
-    /**
-     * Fired when there is a change to the model.
-     * Only fires when `this.set(property,value)` is used to change the model
-     **/
-    onModelChange: function(event){
-      this._changed = true;
-    },
-
-    /**
-     * Determines whether or not the model has changed
-     *
-     * @return {boolean} whether or not the model has changed
-     */
-    hasChanged: function(){
-      return this._changed;
     }
 
   });
