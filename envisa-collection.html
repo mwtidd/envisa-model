@@ -32,7 +32,6 @@ Example:
 
   <template>
     <iron-ajax id="load"
-               auto
                url="[[url]]/[[path]]/"
                handle-as="json"
                on-response="onGetCollection"
@@ -121,6 +120,10 @@ Example:
       if(event.detail.status == 200){
         this.collection = event.detail.response;
       }
+    },
+
+    loadCollection: function(){
+      this.$.load.generateRequest();
     }
 
   });
