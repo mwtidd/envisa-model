@@ -34,6 +34,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         test('load, change, and save model', function(done) {
 
+          myCollection.addEventListener("model-create-error",function(event){
+            assert.fail("Unable to create the model");
+          });
+
+          myModel.addEventListener("model-save-error",function(event){
+            assert.fail("Unable to save the model");
+          });
+
+          myModel.addEventListener("model-delete-error",function(event){
+            assert.fail("Unable to delete the model");
+          });
+
           myCollection.addEventListener("model-created", function(event){
             myModel.set("modelId",event.detail.id);
             myModel.loadModel();
@@ -48,6 +60,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           myModel.addEventListener("model-saved", function(){
             assert.equal(false, myModel.hasChanged());
+            myModel.deleteModel();
+          });
+
+          myModel.addEventListener("model-deleted", function(){
             done();
           });
 

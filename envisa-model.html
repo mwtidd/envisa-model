@@ -29,7 +29,13 @@ Example:
   </style>
 
   <template>
-
+    <iron-ajax id="delete"
+               url="[[url]]/[[path]]/[[modelId]]"
+               method="DELETE"
+               content-type="application/json"
+               handle-as="json"
+               on-response="onDeleteModel"
+               debounce-duration="300"></iron-ajax>
     <iron-ajax id="save"
               url="[[url]]/[[path]]/[[modelId]]"
               method="PUT"
@@ -138,6 +144,8 @@ Example:
         this.model = event.detail.response;
         this._changed = false;
         this.fire("model-loaded", this.model);
+      }else{
+        this.fire("model-load-error", this.model)
       }
     },
 
@@ -152,10 +160,26 @@ Example:
         //this.model = event.detail.response;
         this._changed = false;
         this.fire("model-saved", this.model);
+      }else{
+        this.fire("model-save-error", this.model)
       }
     },
 
+    /**
+     * Fired after the model delete is finished
+     *
+     * @param {object} event The delete event.
+     **/
 
+    onDeleteModel: function(event){
+      if(event.detail.status == 200){
+        //this.model = event.detail.response;
+        this._changed = false;
+        this.fire("model-deleted", this.model);
+      }else{
+        this.fire("model-delete-error", this.model)
+      }
+    },
 
     /**
      * Fired when there is a change to the model.
@@ -192,6 +216,13 @@ Example:
       if(this.modelId) {
         this.$.save.body = JSON.stringify(this.model);
         this.$.save.generateRequest();
+      }
+    },
+
+    deleteModel: function(){
+      if(this.modelId){
+        this.$.delete.body = JSON.stringify(this.model);
+        this.$.delete.generateRequest();
       }
     }
 

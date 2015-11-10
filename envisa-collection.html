@@ -43,9 +43,6 @@ Example:
                handle-as="json"
                on-response="onGetCollection"
                debounce-duration="300"></iron-ajax>
-    <template is="dom-repeat" items="{{collection}}">
-        <envisa-model url="[[url]]" path="[[path]]" model="[[item]]"></envisa-model>
-    </template>
     <content></content>
   </template>
 
@@ -143,10 +140,10 @@ Example:
 
     onCreateModel: function(event){
       if(event.detail.status == 200){
-        this.model = event.detail.response;
-        this.modelId = this.model.id;
-        this._changed = false;
-        this.fire("model-created", this.model);
+        this.push("collection", event.detail.response);
+        this.fire("model-created", event.detail.response);
+      }else{
+        this.fire("model-create-error", event.detail.response)
       }
     },
 
