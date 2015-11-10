@@ -17,38 +17,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../web-component-tester/browser.js"></script>
 
     <!-- Step 1: import the element to test -->
-    <link rel="import" href="../envisa-model.html">
+    <link rel="import" href="../envisa-collection.html">
   </head>
   <body>
 
     <!-- You can use the document as a place to set up your fixtures. -->
-    <envisa-model url="http://test.envisa.com:4040/envisa-rules" path="rules" model-class="com.envisa.rule.model.mongo.MongoEnvisaRule"></envisa-model>
+    <envisa-collection url="http://test.envisa.com:4040/envisa-rules" path="rules" model-class="com.envisa.rule.model.mongo.MongoEnvisaRule"></envisa-collection>
+    <envisa-model url="http://test.envisa.com:4040/envisa-rules" path="rules"></envisa-model>
 
     <script>
-      var myEl = document.querySelector('envisa-model');
+      var myModel = document.querySelector('envisa-model');
+      var myCollection = document.querySelector('envisa-collection');
 
-      suite('<envisa-model>', function() {
+
+      suite('<envisa-collection>', function() {
 
         test('load, change, and save model', function(done) {
 
-          myEl.addEventListener("model-created", function(){
-
-              myEl.loadModel();
+          myCollection.addEventListener("model-created", function(event){
+            myModel.set("modelId",event.detail.id);
+            myModel.loadModel();
           });
 
-          myEl.addEventListener("model-loaded", function(){
-              assert.equal(false, myEl.hasChanged());
-              myEl.setModelProperty("action", {"reason":"Test Reason"});
-              assert.equal(true, myEl.hasChanged());
-              myEl.saveModel();
+          myModel.addEventListener("model-loaded", function(){
+              assert.equal(false, myModel.hasChanged());
+              myModel.setModelProperty("action", {"reason":"Test Reason"});
+              assert.equal(true, myModel.hasChanged());
+              myModel.saveModel();
           });
 
-          myEl.addEventListener("model-saved", function(){
-            assert.equal(false, myEl.hasChanged());
+          myModel.addEventListener("model-saved", function(){
+            assert.equal(false, myModel.hasChanged());
             done();
           });
 
-          myEl.createModel();
+          myCollection.createModel();
         });
 
 

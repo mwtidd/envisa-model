@@ -31,6 +31,13 @@ Example:
   </style>
 
   <template>
+    <iron-ajax id="create"
+               url="[[url]]/[[path]]/"
+               method="POST"
+               content-type="application/json"
+               handle-as="json"
+               on-response="onCreateModel"
+               debounce-duration="300"></iron-ajax>
     <iron-ajax id="load"
                url="[[url]]/[[path]]/"
                handle-as="json"
@@ -78,6 +85,15 @@ Example:
         type: Array,
         value: [],
         notify: true
+      },
+
+      /**
+       * `modelClass` The Java class for the data model
+       * @type {string}
+       **/
+      modelClass: {
+        type: String,
+        value: null
       }
 
     },
@@ -111,6 +127,29 @@ Example:
 
     // Element Behavior
 
+    createModel: function(){
+      if(!this.modelId){
+        this.model = {"className": this.modelClass};
+        this.$.create.body = JSON.stringify(this.model);
+        this.$.create.generateRequest();
+      }
+    },
+
+    /**
+     * Fired after the model is created
+     *
+     * @param {object} event The create event.
+     **/
+
+    onCreateModel: function(event){
+      if(event.detail.status == 200){
+        this.model = event.detail.response;
+        this.modelId = this.model.id;
+        this._changed = false;
+        this.fire("model-created", this.model);
+      }
+    },
+
     /**
      * Fired after the collection get is finished
      *
@@ -118,7 +157,7 @@ Example:
      **/
     onGetCollection: function(event){
       if(event.detail.status == 200){
-        this.collection = event.detail.response;
+        this.set("collection", event.detail.response);
       }
     },
 
