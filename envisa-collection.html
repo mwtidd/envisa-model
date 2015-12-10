@@ -155,7 +155,7 @@ Example:
      **/
     onGetCollection: function(event){
       if(event.detail.status == 200){
-        this.collection = event.detail.response;
+        this.splice.apply(this,["collection", 0, this.collection.length].concat(event.detail.response));
         this.fire("collection-loaded", event.detail.response);
       }else{
         this.fire("collection-load-error", event.detail.response)
