@@ -125,12 +125,9 @@ Example:
 
     // Element Behavior
 
-    createModel: function(){
-      if(!this.modelId){
-        this.model = {"className": this.modelClass};
-        this.$.create.body = JSON.stringify(this.model);
+    createModel: function(model){
+        this.$.create.body = JSON.stringify(model);
         this.$.create.generateRequest();
-      }
     },
 
     /**
