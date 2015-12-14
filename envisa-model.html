@@ -213,10 +213,8 @@ Example:
     },
 
     saveModel: function(){
-      if(this.modelId) {
-        this.$.save.body = JSON.stringify(this.model);
-        this.$.save.generateRequest();
-      }
+      this.$.save.body = JSON.stringify(this.model);
+      this.$.save.generateRequest();
     },
 
     deleteModel: function(){
