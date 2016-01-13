@@ -42,7 +42,7 @@ Example:
                url="[[url]]/[[path]]/"
                handle-as="json"
                on-response="onGetCollection"
-               auto
+               auto$="[[auto]]"
                debounce-duration="300"></iron-ajax>
     <content></content>
   </template>
@@ -92,7 +92,16 @@ Example:
       modelClass: {
         type: String,
         value: null
-      }
+      },
+
+      /**
+       * If true, automatically performs an Ajax request when either `url` or
+       * `params` changes.
+       */
+      auto: {
+        type: Boolean,
+        value: true
+      },
 
     },
 
